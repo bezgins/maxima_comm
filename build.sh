@@ -8,7 +8,6 @@ fi
 
 cd bin
 
-cmake ./..
-make
+cmake ./.. && make
 
 cd ..
