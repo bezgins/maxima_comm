@@ -1,4 +1,5 @@
 *~
+.*.sw?
 CMakeFiles
 CMakeCache.txt
 Makefile

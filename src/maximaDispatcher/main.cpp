@@ -24,7 +24,8 @@ class MaximaDispatcherImpl : public MaximaLib::MaximaDispatcher
         virtual void registerWorker(const MaximaLib::MaximaWorkerPrx& worker,
                                     const Ice::Current&)
         {
-            std::cout << "registered:" << (Ice::Application::communicator()->proxyToString(worker)) << std::endl;
+            Ice::Trace tracer(Ice::Application::communicator()->getLogger(), "registerWorker");
+            tracer << "registered:" << (Ice::Application::communicator()->proxyToString(worker));
         }
 
         /**
@@ -33,7 +34,8 @@ class MaximaDispatcherImpl : public MaximaLib::MaximaDispatcher
         virtual void unregisterWorker(const MaximaLib::MaximaWorkerPrx& worker,
                                     const ::Ice::Current&)
         {
-            std::cout << "unregistered:" << (Ice::Application::communicator()->proxyToString(worker)) << std::endl;
+            Ice::Trace tracer(Ice::Application::communicator()->getLogger(), "unregisterWorker");
+            tracer << "unregistered:" << (Ice::Application::communicator()->proxyToString(worker));
         }
 };
 
