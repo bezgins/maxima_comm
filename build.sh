@@ -6,6 +6,8 @@ then
     mkdir bin;
 fi
 
+slice2cpp --output-dir slice slice/Maxima.ice 
+
 cd bin
 
 cmake ./.. && make

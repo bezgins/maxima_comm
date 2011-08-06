@@ -85,7 +85,7 @@ public:
 //        std::cout << "| " << str << std::endl;
     }
 
-    std::string calculate(std::string &str);
+    std::string calculate(const std::string &str);
 };
 
 

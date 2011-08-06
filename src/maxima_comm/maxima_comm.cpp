@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace maxima_comm
 {
 
-std::string MaximaCommunication::calculate(std::string &str)
+std::string MaximaCommunication::calculate(const std::string &str)
 {
     std::string str1;
 
