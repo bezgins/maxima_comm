@@ -2,20 +2,39 @@
 #include <Maxima.h>
 #include <string>
 #include <iostream>
-
+#include <IceUtil/Mutex.h>
+#include "WorkerQueue.h"
 
 /**
  * Класс, реализующий диспетчера
  **/
 class MaximaDispatcherImpl : public MaximaLib::MaximaDispatcher
 {
+    private:
+        IceUtil::Mutex *mutex;
+
+        WorkerQueue *queue;
+
     public:
+
+        MaximaDispatcherImpl()
+        {
+            mutex = new IceUtil::Mutex();
+            queue = new WorkerQueue(mutex);
+        }
+
+        virtual ~MaximaDispatcherImpl()
+        {
+            delete queue;
+            delete mutex;
+        }
+
         /**
          * Вычислить строку на нужном воркере
          **/
         virtual std::string calculate(const std::string& s, const Ice::Current&)
         {
-            return "Not implemented";
+            return queue->getWorker()->calculate(s);
         }
 
         /**
@@ -24,8 +43,11 @@ class MaximaDispatcherImpl : public MaximaLib::MaximaDispatcher
         virtual void registerWorker(const MaximaLib::MaximaWorkerPrx& worker,
                                     const Ice::Current&)
         {
-            Ice::Trace tracer(Ice::Application::communicator()->getLogger(), "registerWorker");
-            tracer << "registered:" << (Ice::Application::communicator()->proxyToString(worker));
+            Ice::Trace tracer(Ice::Application::communicator()->getLogger(), "MaximaDispatcher::registerWorker");
+
+            queue->addWorker(worker);
+
+            tracer << "registered:\t" << (Ice::Application::communicator()->proxyToString(worker));
         }
 
         /**
@@ -34,8 +56,8 @@ class MaximaDispatcherImpl : public MaximaLib::MaximaDispatcher
         virtual void unregisterWorker(const MaximaLib::MaximaWorkerPrx& worker,
                                     const ::Ice::Current&)
         {
-            Ice::Trace tracer(Ice::Application::communicator()->getLogger(), "unregisterWorker");
-            tracer << "unregistered:" << (Ice::Application::communicator()->proxyToString(worker));
+            Ice::Trace tracer(Ice::Application::communicator()->getLogger(), "MaximaDispatcher::unregisterWorker");
+            tracer << "unregistered:\t" << (Ice::Application::communicator()->proxyToString(worker));
         }
 };
 

@@ -3,7 +3,7 @@
 #include <iostream>
 
 /////
-// Приложение для проверки воркера.
+// Приложение для проверки Диспетчера.
 /////
 
 class MyApp : public Ice::Application
@@ -12,8 +12,8 @@ class MyApp : public Ice::Application
         virtual int run(int, char*[])
         {
             Ice::ObjectPrx obj = 
-                communicator()->stringToProxy("MaximaWorker:default -p 31337");
-            MaximaLib::MaximaWorkerPrx wrk = MaximaLib::MaximaWorkerPrx::checkedCast(obj);
+                communicator()->stringToProxy("MaximaDispatcher:default -p 31338");
+            MaximaLib::MaximaDispatcherPrx wrk = MaximaLib::MaximaDispatcherPrx::checkedCast(obj);
             
             if(!wrk)
                 throw "Invalid Proxy";
