@@ -10,14 +10,14 @@ int main ()
 {
     using namespace boost::numeric::ublas;
 
-    matrix<double> a (3, 3);
+    matrix<double> a (10, 10);
 
     for (unsigned i = 0; i < a.size1(); ++ i)
         for (unsigned j = 0; j < a.size2(); ++ j)
-            a(i, j) = 3;
+            a(i, j) = 0.1 * ((double)j/ 4.0);
 
 
-    MatrixExp::SimpleExp se(0.0001);
+    MatrixExp::SimpleExp se(0.000001);
 
     matrix<double> result = se(a);
 
@@ -27,7 +27,11 @@ int main ()
 
     MatrixExp::PchelExp pe(a);
 
-    std::cout << pe.exp(1, 0.0001) << std::endl;
+    matrix<double> result1 = pe.exp(1, 0.0000001); 
+
+    std::cout << result1 << std::endl;
+
+    std::cout << result - result1 << std::endl;
 
 
     return 0;

@@ -25,7 +25,7 @@ class PchelExp
 public:
 
     PchelExp(ublas::matrix<double> m)
-        : powers(a.size1() + 1), a(m)
+        : a(m), powers(a.size1() + 1)
     {    
        powers[0] = ublas::identity_matrix<double>(a.size1(), a.size2());
        powers[1] = a;
@@ -37,7 +37,9 @@ public:
 
     ublas::matrix<double> exp(const double t, const double eps) const
     {
-        ublas::matrix<double> result(a.size1(), a.size2());
+        ublas::matrix<double> result = ublas::zero_matrix<double>(a.size1(), a.size2());
+
+        //cout << result << endl;
 
         int n = a.size1();
 
@@ -51,15 +53,29 @@ public:
             do
             {
                 cout << "m=" << m << endl;
-                r = (q(m, n-k)) / (factorial(m+n));
+                double r1 = q(m, n - k);
+                double r2 = factorial(m + n);
+
+//                cout << "R(" << m << "," << k << ")= " <<  r1 << " / " << r2 << endl;
+
+                r = r1 / r2;
+
+                //cout << r << endl;
+
                 temp += r;
-                ++m;
-            } while (r > eps);
+                m++;
+            } while (fabs(r) > eps);
+
+//            cout << "temp = " << temp << endl;
 
             temp = (pow(t, k) / factorial(k)) + temp;
 
+//            cout << "temp = " << temp << endl;
+
             result += powers[k] * temp;
         }
+
+        return result;
     }
 
 private:
@@ -67,7 +83,7 @@ private:
     {
         double result = 0;
 
-        for(int i = 0; i < a.size1(); ++i)
+        for(size_t i = 0; i < a.size1(); ++i)
         {
             result += a(i,i);
         }
@@ -77,7 +93,9 @@ private:
 
     double s(const unsigned int k) const
     {
-        return trace(powers[k]);
+        double result = trace(powers[k]);
+//        cout << "s(" << k << ") = " << result << endl;
+        return result;
     }
 
     double p(const unsigned int k) const 
@@ -87,12 +105,16 @@ private:
         
         double result = s(k);
 
-        for(int i = 1; i <= (k-1); ++i)
+        for(unsigned int i = 1; i <= (k-1); ++i)
         {
             //TODO: Add memoization here.
             double tmp = p(i) * s(k-i);
             result -= tmp;
         }
+
+        result /= k;
+
+//        cout << "P(" << k << ") = " << result << endl;
 
         return result / k;
     }
@@ -100,17 +122,17 @@ private:
     double q(const unsigned int m, const unsigned int k) const 
     {
 
-        cout << "q(" << m << "," << k << ")" << endl;
+//        cout << "q(" << m << "," << k << ")" << endl;
 
         if(k == a.size1() + 1)
         {
-            cout << "returning 0" << endl;
+//            cout << "returning 0" << endl;
             return 0;
         }
 
         if(m == 0)
         {
-            cout << "returning p(k)" << endl;
+//            cout << "returning p(k)" << endl;
             return p(k);
         }
 
@@ -121,7 +143,7 @@ private:
     {
         double result = 1;
 
-        for (int i = 2; i <= n; ++i)
+        for (unsigned int i = 2; i <= n; ++i)
             result *= i;
 
         return result;
