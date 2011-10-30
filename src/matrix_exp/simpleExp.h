@@ -9,6 +9,7 @@ class SimpleExp
 private:
 
     double epsilon;
+    double t;
 
     // Получить следующий факториал
     double nextFactor(double prev, double current) const
@@ -29,20 +30,24 @@ public:
     SimpleExp()
     {
         epsilon = 0.001;
+        t = 1;
     }
 
-    SimpleExp(const double eps)
-        : epsilon(eps)
+    SimpleExp(const double _t, const double eps)
+        : epsilon(eps), t(_t)
     {
     }
 
-    ublas::matrix<double> operator()(const ublas::matrix<double>& a) const
+    ublas::matrix<double> operator()(const ublas::matrix<double>& _a) const
     {
-        size_t n = a.size1(), m = a.size2();
+        size_t n = _a.size1(), m = _a.size2();
 
         ublas::identity_matrix<double> id(n, m);
 
-        ublas::matrix<double> result(n,m), temp(n,m), step(n,m);
+        ublas::matrix<double> a(n,m), result(n,m), temp(n,m), step(n,m);
+
+        a = _a * t;
+
         result = id + a;
         temp = a;
 
@@ -58,10 +63,10 @@ public:
             result += step;
             i++;
 
-            finished = ublas::norm_inf(step) < epsilon;
+            finished = ublas::norm_1(step) < epsilon;
         }
 
-        std::cout << "It took " << i << " steps." << std::endl;
+        //std::cout << "It took " << i << " steps." << std::endl;
 
         return result;
     }
